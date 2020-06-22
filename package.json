@@ -1,0 +1,31 @@
+{
+  "name": "dapp-page",
+  "version": "1.0.0",
+  "description": "Personal page on Dappy",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "webpack --mode development --watch",
+    "build": "webpack --mode production",
+    "dappy:init": "node ./node_modules/dappy-cli/lib/ init",
+    "dappy:build": "node ./node_modules/dappy-cli/lib/ build",
+    "dappy:push": "node ./node_modules/dappy-cli/lib/ push",
+    "dappy:update": "node ./node_modules/dappy-cli/lib/ update",
+    "dappy:watch": "node ./node_modules/dappy-cli/lib/ update --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.5",
+    "webpack": "^4.29.3",
+    "webpack-cli": "^3.3.6"
+  },
+  "dependencies": {
+    "dappy-cli": "0.3.9",
+    "react": "16.8.5",
+    "react-dom": "16.8.5"
+  }
+}
