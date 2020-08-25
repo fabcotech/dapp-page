@@ -17,9 +17,6 @@ body {
   width: 95%;
   min-height: 95%;
 }
-.page-text {
-  white-space: pre;
-}
 
 .genesis-form > p,
 .genesis-form > .field {
@@ -46,4 +43,36 @@ body {
   position: absolute;
   bottom: 5px;
   left: 5px;
+}
+
+/* apply bulma css sizes to tags */
+
+h1 {
+  font-size: 3rem;
+}
+
+h2 {
+  font-size: 2.5rem;
+}
+h3 {
+  font-size: 2rem;
+}
+h4 {
+  font-size: 1.5rem;
+}
+h5 {
+  font-size: 1.25rem;
+}
+h2 {
+  font-size: 1rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-bottom: 15px;
 }

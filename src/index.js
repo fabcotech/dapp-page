@@ -6,7 +6,8 @@ import { AppComponent } from "./App";
 // In Dappy, window is already loaded when this code executes
 if (typeof dappyRChain !== "undefined") {
   dappyRChain
-    .fetch("dappy://betanetwork/REGISTRY_URI")
+    // Shortcut : will be changed to dappy://NETWORK_ID/REGISTRY_URI by Dappy browser
+    .fetch("dappy://REGISTRY_URI")
     .then((a) => {
       const response = JSON.parse(a);
       const rholangTerm = response.expr[0];
@@ -20,7 +21,8 @@ if (typeof dappyRChain !== "undefined") {
       console.log(jsValue);
       if (jsValue.files.page) {
         dappyRChain
-          .exploreDeploys("dappy://betanetwork/explore-deploys", [
+          // Shortcut : will be changed to dappy://NETWORK_ID/REGISTRY_URI by Dappy browser
+          .exploreDeploys("dappy://explore-deploys", [
             /* Get page from the rholang-files-module contract */
             `new return,
               fileCh,

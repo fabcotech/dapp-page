@@ -1,6 +1,9 @@
 import React, { Fragment } from "react";
+import showdown from "showdown";
 
 import { GenesisFormComponent } from "./GenesisForm";
+
+const converter = new showdown.Converter();
 
 export class AppComponent extends React.Component {
   constructor(props) {
@@ -86,11 +89,18 @@ export class AppComponent extends React.Component {
         </div>
       );
     }
-
+    if (false) {
+      return <div></div>;
+    }
     if (this.props.text && !this.state.update) {
       return (
         <Fragment>
-          <div className="page-text">{this.props.text}</div>
+          <div
+            className="page-text"
+            dangerouslySetInnerHTML={{
+              __html: converter.makeHtml(this.props.text),
+            }}
+          ></div>
           <a
             className="update-page"
             onClick={() => {
@@ -109,6 +119,11 @@ export class AppComponent extends React.Component {
       <Fragment>
         <GenesisFormComponent
           onUpdatePage={this.onUpdatePage}
+          cancel={() => {
+            this.setState({
+              update: false,
+            });
+          }}
           nonce={this.props.nonce}
           text={this.props.text}
           title={this.props.title}

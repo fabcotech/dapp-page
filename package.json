@@ -1,6 +1,6 @@
 {
   "name": "dapp-page",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Personal page on Dappy",
   "main": "src/index.js",
   "scripts": {
@@ -26,6 +26,7 @@
   "dependencies": {
     "dappy-cli": "0.3.9",
     "react": "16.8.5",
-    "react-dom": "16.8.5"
+    "react-dom": "16.8.5",
+    "showdown": "^1.9.1"
   }
 }

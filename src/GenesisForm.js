@@ -39,7 +39,7 @@ export class GenesisFormComponent extends React.Component {
           </div>
         </div>
         <div className="field">
-          <label className="label">Text</label>
+          <label className="label">Text (markdown)</label>
           <p className="note">
             <b>Note: </b>Data will be stored as a string, and secured with{" "}
             <b>encodeURI()</b>
@@ -72,8 +72,18 @@ export class GenesisFormComponent extends React.Component {
             }}
           >
             Save text and create page
-          </button>
+          </button>{" "}
+          {this.props.text ? (
+            <button
+              className="button is-light"
+              type="button"
+              onClick={this.props.cancel}
+            >
+              Cancel
+            </button>
+          ) : undefined}
         </div>
+        <br />
       </div>
     );
   }
