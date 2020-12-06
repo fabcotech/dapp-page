@@ -1,6 +1,6 @@
 {
   "name": "dapp-page",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Personal page on Dappy",
   "main": "src/index.js",
   "scripts": {
@@ -12,8 +12,8 @@
     "dappy:update": "node ./node_modules/dappy-cli/lib/ update",
     "dappy:watch": "node ./node_modules/dappy-cli/lib/ update --watch"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "FABCO",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
@@ -24,9 +24,10 @@
     "webpack-cli": "^3.3.6"
   },
   "dependencies": {
-    "dappy-cli": "0.4.2",
+    "dappy-cli": "0.4.4",
     "react": "16.8.5",
     "react-dom": "16.8.5",
-    "showdown": "^1.9.1"
+    "showdown": "^1.9.1",
+    "rchain-token-files": "fabcotech/rchain-token#aaf8df2b9715608f307647989f5f8f3e24565bae"
   }
 }

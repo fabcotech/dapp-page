@@ -1,7 +1,12 @@
-import React, { Fragment } from "react";
-import showdown from "showdown";
+import React, { Fragment } from 'react';
+import showdown from 'showdown';
 
-import { GenesisFormComponent } from "./GenesisForm";
+import {
+  updateBagDataTerm,
+  createTokensTerm,
+  readBagsTerm,
+} from 'rchain-token-files';
+import { GenesisFormComponent } from './GenesisForm';
 
 const converter = new showdown.Converter();
 
@@ -15,52 +20,94 @@ export class AppComponent extends React.Component {
   }
 
   onUpdatePage = (payload) => {
-    if (typeof dappyRChain === "undefined") {
-      console.warn("window.dappyRChain is undefined, cannot deploy page");
+    if (typeof dappyRChain === 'undefined') {
+      console.warn('window.dappyRChain is undefined, cannot deploy page');
       return;
     }
 
-    const newNonce = blockchainUtils.generateNonce();
-
-    // Storing the page value in the files module
-    const term = `new entryCh, lookup(\`rho:registry:lookup\`), stdout(\`rho:io:stdout\`) in {
-  lookup!(\`rho:id:REGISTRY_URI\`, *entryCh) |
-
-  for(entry <- entryCh) {
-    entry!(
-      {
-        "type": "ADD_OR_UPDATE",
-        "payload": {
-          "id": "page",
-          "file": {
-            "text": "${encodeURI(payload.text)}",
-            "title": "${encodeURI(payload.title)}",
-          },
-          "nonce": "${newNonce}",
-          "signature": "SIGN"
-        }
-      },
-      *stdout
-    )
-  }
-}`;
-    dappyRChain
-      .transaction({
-        term: term,
-        signatures: {
-          SIGN: payload.nonce,
+    // must create bag "page"
+    if (this.props.nonce) {
+      const bags = {
+        page: {
+          quantity: 1,
+          price: null,
+          publicKey: this.props.publicKey,
+          n: '0',
+          nonce: blockchainUtils.generateNonce(),
         },
-      })
-      .then((a) => {
-        this.setState({
-          modal: "transaction-sent",
-          update: false,
+      };
+      const data = {
+        page: encodeURI(
+          JSON.stringify({ text: payload.text, title: payload.title })
+        ),
+      };
+      const payloadForTerm = {
+        bags: bags,
+        data: data,
+        nonce: this.props.nonce,
+        newNonce: blockchainUtils.generateNonce(),
+      };
+      const ba = blockchainUtils.toByteArray(payloadForTerm);
+      const term = createTokensTerm(
+        this.props.registryUri.replace('rho:id:', ''),
+        payloadForTerm,
+        'SIGN'
+      );
+      dappyRChain
+        .transaction({
+          term: term,
+          signatures: {
+            SIGN: blockchainUtils.uInt8ArrayToHex(ba),
+          },
+        })
+        .then((a) => {
+          this.setState({
+            modal: 'transaction-sent',
+            update: false,
+          });
         });
+    } else {
+      dappyRChain.exploreDeploys([readBagsTerm('REGISTRY_URI')]).then((a) => {
+        const results = JSON.parse(a).results;
+        const bags = blockchainUtils.rhoValToJs(
+          JSON.parse(results[0].data).expr[0]
+        );
+
+        const newNonce = blockchainUtils.generateNonce();
+
+        const payloadForTerm = {
+          nonce: bags['page'].nonce,
+          newNonce: newNonce,
+          bagId: 'page',
+          data: encodeURI(
+            JSON.stringify({ text: payload.text, title: payload.title })
+          ),
+        };
+        const ba = blockchainUtils.toByteArray(payloadForTerm);
+        const term = updateBagDataTerm(
+          this.props.registryUri.replace('rho:id:', ''),
+          payloadForTerm,
+          'SIGN'
+        );
+        dappyRChain
+          .transaction({
+            term: term,
+            signatures: {
+              SIGN: blockchainUtils.uInt8ArrayToHex(ba),
+            },
+          })
+          .then((a) => {
+            this.setState({
+              modal: 'transaction-sent',
+              update: false,
+            });
+          });
       });
+    }
   };
 
   render() {
-    if (this.state.modal === "transaction-sent") {
+    if (this.state.modal === 'transaction-sent') {
       return (
         <div className="modal">
           <div className="modal-background"></div>
@@ -124,7 +171,6 @@ export class AppComponent extends React.Component {
               update: false,
             });
           }}
-          nonce={this.props.nonce}
           text={this.props.text}
           title={this.props.title}
         ></GenesisFormComponent>
