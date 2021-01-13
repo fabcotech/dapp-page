@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const defaultText = "Hi I'm Bob";
 const defaultTitle = "Bob's page";
@@ -41,7 +41,7 @@ export class GenesisFormComponent extends React.Component {
         <div className="field">
           <label className="label">Text (markdown)</label>
           <p className="note">
-            <b>Note: </b>Data will be stored as a string, and secured with{" "}
+            <b>Note: </b>Data will be stored as a string, and secured with{' '}
             <b>encodeURI()</b>
           </p>
           <div className="control">
@@ -66,13 +66,12 @@ export class GenesisFormComponent extends React.Component {
                 this.props.onUpdatePage({
                   text: this.state.text,
                   title: this.state.title,
-                  nonce: this.props.nonce,
                 });
               }
             }}
           >
             Save text and create page
-          </button>{" "}
+          </button>{' '}
           {this.props.text ? (
             <button
               className="button is-light"

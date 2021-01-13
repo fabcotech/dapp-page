@@ -136,9 +136,6 @@ export class AppComponent extends React.Component {
         </div>
       );
     }
-    if (false) {
-      return <div></div>;
-    }
     if (this.props.text && !this.state.update) {
       return (
         <Fragment>
