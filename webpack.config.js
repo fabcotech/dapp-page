@@ -5,15 +5,15 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader",
+          loader: 'babel-loader',
         },
       },
     ],
   },
   plugins: [],
   externals: {
-    react: "React",
-    "react-dom": "ReactDOM",
-    "rchain-token-files": "RChainTokenFiles",
+    react: 'React',
+    'react-dom': 'ReactDOM',
+    'rchain-token': 'RChainToken',
   },
 };

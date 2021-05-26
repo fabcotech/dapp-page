@@ -2,10 +2,9 @@ import React, { Fragment } from 'react';
 import showdown from 'showdown';
 
 import {
-  updateBagDataTerm,
-  createTokensTerm,
-  readBagsTerm,
-} from 'rchain-token-files';
+  createPursesTerm,
+  updatePurseDataTerm,
+} from 'rchain-token';
 import { GenesisFormComponent } from './GenesisForm';
 
 const converter = new showdown.Converter();
@@ -19,46 +18,25 @@ export class AppComponent extends React.Component {
     };
   }
 
-  onUpdatePage = (payload) => {
-    if (typeof dappyRChain === 'undefined') {
-      console.warn('window.dappyRChain is undefined, cannot deploy page');
-      return;
-    }
-
-    // must create bag "page"
-    if (this.props.nonce) {
-      const bags = {
-        page: {
-          quantity: 1,
-          price: null,
-          publicKey: this.props.publicKey,
-          n: '0',
-          nonce: blockchainUtils.generateNonce(),
-        },
-      };
-      const data = {
-        page: encodeURI(
-          JSON.stringify({ text: payload.text, title: payload.title })
+  onUpdatePage = (p) => {
+    // update data
+    if (this.props.text) {
+      const payload = {
+        masterRegistryUri: this.props.masterRegistryUri,
+        purseId: this.props.purseId,
+        contractId: this.props.contractId,
+        boxId: ["BOX_", "ID"].join(''),
+        data: encodeURI(
+          JSON.stringify({ text: p.text, title: p.title })
         ),
       };
-      const payloadForTerm = {
-        bags: bags,
-        data: data,
-        nonce: this.props.nonce,
-        newNonce: blockchainUtils.generateNonce(),
-      };
-      const ba = blockchainUtils.toByteArray(payloadForTerm);
-      const term = createTokensTerm(
-        this.props.registryUri.replace('rho:id:', ''),
-        payloadForTerm,
-        'SIGN'
-      );
+
+      const term = updatePurseDataTerm(payload);
+
       dappyRChain
         .transaction({
           term: term,
-          signatures: {
-            SIGN: blockchainUtils.uInt8ArrayToHex(ba),
-          },
+          signatures: {},
         })
         .then((a) => {
           this.setState({
@@ -67,42 +45,44 @@ export class AppComponent extends React.Component {
           });
         });
     } else {
-      dappyRChain.exploreDeploys([readBagsTerm('REGISTRY_URI')]).then((a) => {
-        const results = JSON.parse(a).results;
-        const bags = blockchainUtils.rhoValToJs(
-          JSON.parse(results[0].data).expr[0]
-        );
-
-        const newNonce = blockchainUtils.generateNonce();
-
-        const payloadForTerm = {
-          nonce: bags['page'].nonce,
-          newNonce: newNonce,
-          bagId: 'page',
-          data: encodeURI(
+      // create purse
+      const payloadCreatePurse = {
+        masterRegistryUri: this.props.masterRegistryUri,
+        contractId: this.props.contractId,
+        // avoid replacement of dappy cli
+        // will be replaced by dappy browser
+        boxId: ['BOX_', 'ID'].join(''),
+        purses: {
+          [this.props.purseId]: {
+            id: this.props.purseId,
+            // avoid replacement of dappy cli
+            // will be replaced by dappy browser
+            boxId: ['BOX_', 'ID'].join(''),
+            type: '0',
+            quantity: 1,
+            price: null,
+          },
+        },
+        data: {
+          [this.props.purseId]: encodeURI(
             JSON.stringify({ text: payload.text, title: payload.title })
           ),
-        };
-        const ba = blockchainUtils.toByteArray(payloadForTerm);
-        const term = updateBagDataTerm(
-          this.props.registryUri.replace('rho:id:', ''),
-          payloadForTerm,
-          'SIGN'
-        );
-        dappyRChain
-          .transaction({
-            term: term,
-            signatures: {
-              SIGN: blockchainUtils.uInt8ArrayToHex(ba),
-            },
-          })
-          .then((a) => {
-            this.setState({
-              modal: 'transaction-sent',
-              update: false,
-            });
+        },
+      };
+
+      const term = createPursesTerm(payloadCreatePurse);
+
+      dappyRChain
+        .transaction({
+          term: term,
+          signatures: {},
+        })
+        .then((a) => {
+          this.setState({
+            modal: 'transaction-sent',
+            update: false,
           });
-      });
+        });
     }
   };
 

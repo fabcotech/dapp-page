@@ -7,12 +7,12 @@
   },
   "options": {
     "platform": "rchain",
-    "readOnlyHost": "http://localhost",
-    "readOnlyHostHttpPort": "40403",
-    "validatorHost": "http://localhost",
-    "validatorHostHttpPort": "40403",
-    "validatorHostgrpcProposePort": "40402",
+    "readOnly": "http://127.0.0.1:40403",
+    "validator": "http://127.0.0.1:40403",
     "privateKey": "",
-    "registryUri": ""
+    "masterRegistryUri": "",
+    "contractId": "",
+    "boxId": "",
+    "purseId": ""
   }
 }
