@@ -67,13 +67,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }),
       ])
       .then((a) => {
-        console.log(a);
         const results = JSON.parse(a).results;
 
         const config = blockchainUtils.rhoValToJs(
           JSON.parse(results[0].data).expr[0]
         );
-        console.log('config', config)
+
         if (config.fungible !== false) {
           bodyError(
             'This contract is fungible=true (FT), you need a fungible=false (NFT) contract to use tipboard'
@@ -92,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
             JSON.parse(results[1].data).expr[0]
           );
         }
-        console.log(data)
+
         if (data && data[purseId]) {
           const purseData = JSON.parse(decodeURI(data[purseId]));
           if (purseData.title) {

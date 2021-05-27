@@ -46,7 +46,7 @@ export class AppComponent extends React.Component {
         });
     } else {
       // create purse
-      const payloadCreatePurse = {
+      const payload = {
         masterRegistryUri: this.props.masterRegistryUri,
         contractId: this.props.contractId,
         // avoid replacement of dappy cli
@@ -65,12 +65,12 @@ export class AppComponent extends React.Component {
         },
         data: {
           [this.props.purseId]: encodeURI(
-            JSON.stringify({ text: payload.text, title: payload.title })
+            JSON.stringify({ text: p.text, title: p.title })
           ),
         },
       };
 
-      const term = createPursesTerm(payloadCreatePurse);
+      const term = createPursesTerm(payload);
 
       dappyRChain
         .transaction({
