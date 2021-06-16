@@ -1,10 +1,7 @@
 import React, { Fragment } from 'react';
 import showdown from 'showdown';
 
-import {
-  createPursesTerm,
-  updatePurseDataTerm,
-} from 'rchain-token';
+import { createPursesTerm, updatePurseDataTerm } from 'rchain-token';
 import { GenesisFormComponent } from './GenesisForm';
 
 const converter = new showdown.Converter();
@@ -13,6 +10,7 @@ export class AppComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      tip: 0.01,
       modal: undefined,
       update: false,
     };
@@ -25,10 +23,8 @@ export class AppComponent extends React.Component {
         masterRegistryUri: this.props.masterRegistryUri,
         purseId: this.props.purseId,
         contractId: this.props.contractId,
-        boxId: ["BOX_", "ID"].join(''),
-        data: encodeURI(
-          JSON.stringify({ text: p.text, title: p.title })
-        ),
+        boxId: ['BOX_', 'ID'].join(''),
+        data: encodeURI(JSON.stringify({ text: p.text, title: p.title })),
       };
 
       const term = updatePurseDataTerm(payload);
@@ -119,22 +115,59 @@ export class AppComponent extends React.Component {
     if (this.props.text && !this.state.update) {
       return (
         <Fragment>
-          <div
-            className="page-text"
-            dangerouslySetInnerHTML={{
-              __html: converter.makeHtml(this.props.text),
-            }}
-          ></div>
-          <a
-            className="update-page"
-            onClick={() => {
-              this.setState({
-                update: true,
-              });
-            }}
-          >
-            Update page (admin only)
-          </a>
+          <div className="page-text-cont">
+            <u>
+              {dappy.dappyDomain}
+              {dappy.path}
+            </u>
+            <div className="tip">
+              <input
+                className="input"
+                type="number"
+                step="0.01"
+                min="0.01"
+                value={this.state.tip}
+                onChange={(e) => {
+                  if (typeof parseFloat(e.currentTarget.value) === 'number') {
+                    this.setState({ tip: parseFloat(e.currentTarget.value) });
+                  }
+                }}
+              ></input>
+              <b>REV</b>
+              <button
+                disabled={typeof this.state.tip !== 'number'}
+                type="button"
+                className="button"
+                onClick={() => {
+                  dappyRChain.requestPayment({
+                    amount: this.state.tip,
+                    from: undefined,
+                    to: blockchainUtils.revAddressFromPublicKey(
+                      this.props.boxConfig.publicKey
+                    ),
+                  });
+                }}
+              >
+                tip owner of the page
+              </button>
+            </div>
+            <div
+              className="page-text"
+              dangerouslySetInnerHTML={{
+                __html: converter.makeHtml(this.props.text),
+              }}
+            ></div>
+            <a
+              className="update-page"
+              onClick={() => {
+                this.setState({
+                  update: true,
+                });
+              }}
+            >
+              Update page (admin only)
+            </a>
+          </div>
         </Fragment>
       );
     }

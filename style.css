@@ -4,6 +4,24 @@ body {
   position: relative;
   background: #fafafa;
 }
+.body-errors {
+  padding: 10px;
+  align-self: normal;
+  background: #eee;
+  width: 100%;
+  height: 100%;
+}
+.body-error-1 {
+  color: #b22;
+  font-weight: 400;
+  font-size: 1.8rem;
+}
+.body-error-2 {
+  color: #b22;
+  font-weight: 400;
+  font-size: 1.1rem;
+  padding-top: 10px;
+}
 
 #root {
   display: flex;
@@ -11,6 +29,29 @@ body {
   align-items: center;
   height: 100%;
   width: 100%;
+}
+.page-text-cont {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+  padding: 40px;
+}
+.page-text-cont .tip {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 60px;
+}
+.page-text-cont .tip > * {
+  margin: 0px;
+  margin-right: 10px;
+}
+.page-text-cont .tip input {
+  width: 100px;
 }
 
 .genesis-form,
