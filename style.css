@@ -27,8 +27,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  width: 100%;
 }
 .page-text-cont {
   display: flex;
@@ -82,7 +80,7 @@ body {
 }
 
 .update-page {
-  position: absolute;
+  position: fixed;
   bottom: 5px;
   left: 5px;
 }
