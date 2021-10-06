@@ -51,7 +51,9 @@ body {
 .page-text-cont .tip input {
   width: 100px;
 }
-
+.page-text {
+  white-space: break-spaces;
+}
 .genesis-form,
 .page-text {
   width: 95%;

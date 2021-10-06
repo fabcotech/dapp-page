@@ -54,7 +54,6 @@ export class AppComponent extends React.Component {
             // avoid replacement of dappy cli
             // will be replaced by dappy browser
             boxId: ['BOX_', 'ID'].join(''),
-            type: '0',
             quantity: 1,
             price: null,
           },

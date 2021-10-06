@@ -109,8 +109,8 @@ document.addEventListener('DOMContentLoaded', function () {
           return;
         }
 
-        if (config.version !== '6.0.0') {
-          bodyError('Version should be 6.0.0');
+        if (config.version !== '12.0.1') {
+          bodyError('Version should be 12.0.1');
           return;
         }
 
