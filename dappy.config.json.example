@@ -1,0 +1,18 @@
+{
+  "manifest": {
+    "title": "Dappy page",
+    "jsPath": "dist/main.js",
+    "cssPath": "style.css",
+    "htmlPath": "dapp-page.html"
+  },
+  "options": {
+    "platform": "rchain",
+    "readOnly": "http://localhost:40403",
+    "validator": "http://localhost:40403",
+    "privateKey": "abc",
+    "masterRegistryUri": "def",
+    "boxId": "mybox",
+    "contractId": "mycontract",
+    "purseId": "index"
+  }
+}

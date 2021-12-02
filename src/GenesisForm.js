@@ -1,32 +1,72 @@
 import React from 'react';
 
-const defaultText = "Hi I'm Bob";
-const defaultTitle = "Bob's page";
+const defaultText = "#### Hi i'm Bob \nI like football";
+const defaultTitle = "Hi I'm Bob";
 
 export class GenesisFormComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      purseId: 'index',
       text: props.text || defaultText,
       title: props.title || defaultTitle,
     };
   }
 
   render() {
-    console.log(this.state);
+    const newPage = !!this.props.onCreatePage;
     return (
       <div className="genesis-form form">
-        <p>
-          <h5 className="title is-5">Setup your personal page on Dappy</h5>
-          {this.props.text
-            ? `You must sign the transaction with the same private key you used initially. If not the page will not be updated. Once you have submitted this form, wait few
-            minutes and reload the page to see the page.`
-            : `We see that this page has just been deployed and there is no text
-            associated with it. Once you have submitted this form, wait few
-            minutes and reload the page to see the page.`}
-          <br />
-          <br />
-        </p>
+        {
+          newPage &&
+          <p>
+            <br />
+            <h5 className="title is-5">Create your personal page on dappy</h5>
+            {`You must have already deployed a NFT contract to create pages within it. The transaction
+              will create a NFT token. You must sign the transaction with the same private key and box linked
+              to the NFT contract. Once you have submitted this form, wait few
+              minutes and reload the page to see the page.`}
+            <br />
+            <br />
+          </p>
+        }
+        {
+          !newPage &&
+          <p>
+            <br />
+            <h5 className="title is-5">Update your personal page on dappy</h5>
+            {`You must sign the transaction with the same private key and box linked to the NFT contract. Once you have submitted this form, wait few
+              minutes and reload the page to see the page.`}
+            <br />
+            <br />
+          </p>
+        }
+        { newPage && <div className="field">
+          <label className="label">Contract ID</label>
+          <div className="control">
+            <input
+              className="input"
+              onChange={(e) => this.setState({ contractId: e.target.value })}
+              type="text"
+              defaultValue={''}
+            />
+          </div>
+        </div> }
+        { newPage && <div className="field">
+          <label className="label">Page ID</label>
+          <div className="control">
+            <input
+              className="input"
+              onChange={(e) => this.setState({ purseId: e.target.value })}
+              type="text"
+              defaultValue={'index'}
+            />
+          </div>
+        </div> }
+        {
+          newPage && this.state.contractId && this.state.purseId &&
+          <p><u>{`page?contract=${this.state.contractId}${this.state.purseId === 'index' ? '' : `&page=${this.state.purseId}`}`}</u></p>
+        }
         <div className="field">
           <label className="label">Title (tab)</label>
           <div className="control">
@@ -57,30 +97,49 @@ export class GenesisFormComponent extends React.Component {
         </div>
         <br />
         <div className="field">
-          <button
-            className="button is-light"
-            disabled={!(this.state && this.state.text && this.state.title)}
-            type="button"
-            onClick={(e) => {
-              if (this.state && this.state.text && this.state.title) {
-                this.props.onUpdatePage({
+          {
+            newPage && 
+            <button
+              className="button is-light is-medium"
+              disabled={!(this.state && this.state.text && this.state.title && this.state.contractId && this.state.purseId)}
+              type="button"
+              onClick={(e) => {
+                this.props.onCreatePage({
                   text: this.state.text,
                   title: this.state.title,
+                  contractId: this.state.contractId,
+                  purseId: this.state.purseId,
                 });
-              }
-            }}
-          >
-            Save text and create page
-          </button>{' '}
-          {this.props.text ? (
-            <button
-              className="button is-light"
-              type="button"
-              onClick={this.props.cancel}
+              }}
             >
-              Cancel
+              Save text and create page
             </button>
-          ) : undefined}
+          }
+          {
+            !newPage && 
+            <button
+              className="button is-light is-medium"
+              disabled={!(this.state && this.state.text && this.state.title)}
+              type="button"
+              onClick={(e) => {
+                if (this.state && this.state.text && this.state.title) {
+                  this.props.onUpdatePage({
+                    text: this.state.text,
+                    title: this.state.title,
+                  });
+                }
+              }}
+            >
+              Save text and update page
+            </button>
+          }
+          <button
+            className="button is-light is-medium"
+            type="button"
+            onClick={this.props.cancel}
+          >
+            Cancel
+          </button>
         </div>
         <br />
       </div>

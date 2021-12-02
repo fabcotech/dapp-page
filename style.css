@@ -81,10 +81,10 @@ body {
   margin-bottom: 0.5em;
 }
 
-.update-page {
-  position: fixed;
-  bottom: 5px;
-  left: 5px;
+.bottom-buttons {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
 }
 
 /* apply bulma css sizes to tags */
@@ -117,4 +117,21 @@ h5,
 h6,
 p {
   margin-bottom: 15px;
+}
+
+.button.is-light {
+  background: linear-gradient(45deg, #dedede, #efefef);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  color: #555;
+  margin-right: 2rem;
+}
+.button.is-medium {
+  font-size: 1.2rem;
+  padding: 1.5rem 1.5rem;
+}
+.button.tip {
+  background: linear-gradient(45deg, #53b998, #3bdfc1);
+  color: #222;
+  border: 1px solid #245840;
 }

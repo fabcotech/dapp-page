@@ -13,72 +13,75 @@ export class AppComponent extends React.Component {
       tip: 0.01,
       modal: undefined,
       update: false,
+      createPayload: undefined,
     };
   }
 
+  onCreatePage = (p) => {
+    // create purse
+    const payload = {
+      masterRegistryUri: this.props.masterRegistryUri,
+      contractId: p.contractId,
+      // avoid replacement of dappy cli
+      // will be replaced by dappy browser
+      boxId: ['BOX_', 'ID'].join(''),
+      purses: {
+        [p.purseId]: {
+          id: p.purseId,
+          // avoid replacement of dappy cli
+          // will be replaced by dappy browser
+          boxId: ['BOX_', 'ID'].join(''),
+          quantity: 1,
+          price: null,
+        },
+      },
+      data: {
+        [p.purseId]: encodeURI(
+          JSON.stringify({ text: p.text, title: p.title })
+        ),
+      },
+    };
+
+    const term = createPursesTerm(payload);
+
+    dappyRChain
+      .sendTransaction({
+        term: term,
+        signatures: {},
+      })
+      .then((a) => {
+        this.setState({
+          modal: 'transaction-sent',
+          update: false,
+        });
+      });
+
+      this.setState({ createPayload: p })
+  }
+
   onUpdatePage = (p) => {
-    // update data
-    if (this.props.text) {
-      const payload = {
-        masterRegistryUri: this.props.masterRegistryUri,
-        purseId: this.props.purseId,
-        contractId: this.props.contractId,
-        boxId: ['BOX_', 'ID'].join(''),
-        data: encodeURI(JSON.stringify({ text: p.text, title: p.title })),
-      };
+    const payload = {
+      masterRegistryUri: this.props.masterRegistryUri,
+      purseId: this.props.purseId,
+      contractId: this.props.contractId,
+      boxId: ['BOX_', 'ID'].join(''),
+      data: encodeURI(JSON.stringify({ text: p.text, title: p.title })),
+    };
 
-      const term = updatePurseDataTerm(payload);
+    const term = updatePurseDataTerm(payload);
 
-      dappyRChain
-        .transaction({
-          term: term,
-          signatures: {},
-        })
-        .then((a) => {
-          this.setState({
-            modal: 'transaction-sent',
-            update: false,
-          });
+    dappyRChain
+      .sendTransaction({
+        term: term,
+        signatures: {},
+      })
+      .then((a) => {
+        this.setState({
+          modal: 'transaction-sent',
+          update: false,
         });
-    } else {
-      // create purse
-      const payload = {
-        masterRegistryUri: this.props.masterRegistryUri,
-        contractId: this.props.contractId,
-        // avoid replacement of dappy cli
-        // will be replaced by dappy browser
-        boxId: ['BOX_', 'ID'].join(''),
-        purses: {
-          [this.props.purseId]: {
-            id: this.props.purseId,
-            // avoid replacement of dappy cli
-            // will be replaced by dappy browser
-            boxId: ['BOX_', 'ID'].join(''),
-            quantity: 1,
-            price: null,
-          },
-        },
-        data: {
-          [this.props.purseId]: encodeURI(
-            JSON.stringify({ text: p.text, title: p.title })
-          ),
-        },
-      };
+      });
 
-      const term = createPursesTerm(payload);
-
-      dappyRChain
-        .transaction({
-          term: term,
-          signatures: {},
-        })
-        .then((a) => {
-          this.setState({
-            modal: 'transaction-sent',
-            update: false,
-          });
-        });
-    }
   };
 
   render() {
@@ -98,6 +101,9 @@ export class AppComponent extends React.Component {
             <section className="modal-card-body">
               Transaction was successfully sent. Wait few minutes, reload, and
               you should see the page updated.
+              {
+                this.state.new && <><br />The address of the new page will be : <u>page?contract={this.state.createPayload.contractId}&page={this.state.createPayload.purseId || 'index'}</u></>
+              }
             </section>
             <footer className="modal-card-foot">
               <button
@@ -111,7 +117,8 @@ export class AppComponent extends React.Component {
         </div>
       );
     }
-    if (this.props.text && !this.state.update) {
+
+    if (this.props.text && !this.state.update && !this.state.new) {
       return (
         <Fragment>
           <div className="page-text-cont">
@@ -136,18 +143,16 @@ export class AppComponent extends React.Component {
               <button
                 disabled={typeof this.state.tip !== 'number'}
                 type="button"
-                className="button"
+                className="button tip"
                 onClick={() => {
                   dappyRChain.requestPayment({
-                    amount: this.state.tip,
+                    amount: this.state.tip * 100000000,
                     from: undefined,
-                    to: blockchainUtils.revAddressFromPublicKey(
-                      this.props.boxConfig.publicKey
-                    ),
+                    to: this.props.boxConfig.publicKey,
                   });
                 }}
               >
-                tip owner of the page
+                tip page owner
               </button>
             </div>
             <div
@@ -156,21 +161,52 @@ export class AppComponent extends React.Component {
                 __html: converter.makeHtml(this.props.text),
               }}
             ></div>
-            <a
-              className="update-page"
-              onClick={() => {
-                this.setState({
-                  update: true,
-                });
-              }}
-            >
-              Update page (admin only)
-            </a>
+            <div className="bottom-buttons">
+              <a
+                className="button is-light is-medium"
+                onClick={() => {
+                  this.setState({
+                    update: true,
+                    new: false,
+                  });
+                }}
+              >
+                Update page (admin only)
+              </a>
+              <a
+                className="button is-light is-medium"
+                onClick={() => {
+                  this.setState({
+                    update: false,
+                    new: true,
+                  });
+                }}
+              >
+                Create a new page
+              </a>
+            </div>
           </div>
         </Fragment>
       );
     }
 
+    if (this.state.new) {
+      return (
+        <Fragment>
+          <GenesisFormComponent
+            onCreatePage={this.onCreatePage}
+            cancel={() => {
+              this.setState({
+                update: false,
+                create: false,
+              });
+            }}
+            text={''}
+            title={''}
+          ></GenesisFormComponent>
+        </Fragment>
+      );
+    }
     return (
       <Fragment>
         <GenesisFormComponent
@@ -178,6 +214,7 @@ export class AppComponent extends React.Component {
           cancel={() => {
             this.setState({
               update: false,
+              new: false,
             });
           }}
           text={this.props.text}
