@@ -1,6 +1,6 @@
 {
   "name": "dapp-page",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Personal page on Dappy",
   "main": "src/index.js",
   "scripts": {
@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "dappy-cli": "14.0.0",
-    "rchain-token": "fabcotech/rchain-token#14.0.2",
+    "rchain-token": "fabcotech/rchain-token#15.0.2",
     "react": "16.8.5",
     "react-dom": "16.8.5",
     "showdown": "^1.9.1"
