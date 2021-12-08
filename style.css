@@ -1,33 +1,12 @@
-body {
-  height: 100vh;
-  width: 100vw;
-  position: relative;
-  background: #fafafa;
-}
-.body-errors {
-  padding: 10px;
-  align-self: normal;
-  background: #eee;
-  width: 100%;
-  height: 100%;
-}
+
+/* Genesis form and page text */
+
 .body-error-1 {
   color: #b22;
   font-weight: 400;
   font-size: 1.8rem;
 }
-.body-error-2 {
-  color: #b22;
-  font-weight: 400;
-  font-size: 1.1rem;
-  padding-top: 10px;
-}
 
-#root {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 .page-text-cont {
   display: flex;
   flex-direction: column;
@@ -65,13 +44,6 @@ body {
   max-width: 1200px;
 }
 
-.modal {
-  display: block;
-}
-.modal-card {
-  margin-top: 100px;
-}
-
 .has-text-danger {
   text-align: center;
 }
@@ -87,27 +59,27 @@ body {
     left: 2rem;
 }
 
-/* apply bulma css sizes to tags */
+/* GLOBAL */
 
-h1 {
-  font-size: 3rem;
+.modal {
+  display: block;
+}
+.modal-card {
+  margin-top: 100px;
 }
 
-h2 {
-  font-size: 2.5rem;
+body {
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+  background: #fafafa;
 }
-h3 {
-  font-size: 2rem;
+#root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-h4 {
-  font-size: 1.5rem;
-}
-h5 {
-  font-size: 1.25rem;
-}
-h2 {
-  font-size: 1rem;
-}
+
 
 h1,
 h2,
@@ -134,4 +106,15 @@ p {
   background: linear-gradient(45deg, #53b998, #3bdfc1);
   color: #222;
   border: 1px solid #245840;
+}
+
+input, textarea {
+  padding: 1.4rem 1.2rem !important;
+}
+
+
+/* HOME */
+.home {
+  width: 95%;
+  min-height: 95%;
 }
