@@ -15,8 +15,18 @@ export class GenesisFormComponent extends React.Component {
 
   render() {
     const newPage = !!this.props.onCreatePage;
+
+    const contractId = this.state.contractId || this.props.contractId;
     return (
       <div className="genesis-form form">
+        <br />
+        <button
+          className="button is-light is-medium"
+          type="button"
+          onClick={this.props.home}
+        >
+          Home
+        </button>
         {
           newPage &&
           <p>
@@ -25,7 +35,7 @@ export class GenesisFormComponent extends React.Component {
             {`You must have already deployed a NFT contract to create pages within it. The transaction
               will create a NFT token. You must sign the transaction with the same private key and box linked
               to the NFT contract. Once you have submitted this form, wait few
-              minutes and reload the page to see the page.`}
+              minutes and access the page.`}
             <br />
             <br />
           </p>
@@ -36,7 +46,7 @@ export class GenesisFormComponent extends React.Component {
             <br />
             <h5 className="title is-5">Update your personal page on dappy</h5>
             {`You must sign the transaction with the same private key and box linked to the NFT contract. Once you have submitted this form, wait few
-              minutes and reload the page to see the page.`}
+              minutes and access the page.`}
             <br />
             <br />
           </p>
@@ -48,7 +58,8 @@ export class GenesisFormComponent extends React.Component {
               className="input"
               onChange={(e) => this.setState({ contractId: e.target.value })}
               type="text"
-              defaultValue={''}
+              disabled={!!this.props.contractId}
+              defaultValue={this.props.contractId ? this.props.contractId : ''}
             />
           </div>
         </div> }
@@ -64,8 +75,8 @@ export class GenesisFormComponent extends React.Component {
           </div>
         </div> }
         {
-          newPage && this.state.contractId && this.state.purseId &&
-          <p><u>{`page?contract=${this.state.contractId}${this.state.purseId === 'index' ? '' : `&page=${this.state.purseId}`}`}</u></p>
+          newPage && contractId && this.state.purseId &&
+          <p><u>{`page?contract=${contractId}${this.state.purseId === 'index' ? '' : `&page=${this.state.purseId}`}`}</u></p>
         }
         <div className="field">
           <label className="label">Title (tab)</label>
@@ -101,13 +112,13 @@ export class GenesisFormComponent extends React.Component {
             newPage && 
             <button
               className="button is-light is-medium"
-              disabled={!(this.state && this.state.text && this.state.title && this.state.contractId && this.state.purseId)}
+              disabled={!(this.state && this.state.text && this.state.title && contractId && this.state.purseId)}
               type="button"
               onClick={(e) => {
                 this.props.onCreatePage({
                   text: this.state.text,
                   title: this.state.title,
-                  contractId: this.state.contractId,
+                  contractId: contractId,
                   purseId: this.state.purseId,
                 });
               }}

@@ -1,16 +1,15 @@
 import React, { Fragment } from 'react';
-import showdown from 'showdown';
 
 import { createPursesTerm, updatePurseDataTerm } from 'rchain-token';
 import { GenesisFormComponent } from './GenesisForm';
-
-const converter = new showdown.Converter();
+import { HomeComponent } from './Home';
+import { PageComponent } from './Page';
 
 export class AppComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      tip: 0.01,
+      home: false,
       modal: undefined,
       update: false,
       createPayload: undefined,
@@ -85,6 +84,10 @@ export class AppComponent extends React.Component {
   };
 
   render() {
+
+    let neww = this.state.new || // has clicked on "create new"
+      (this.props.contractId && !this.props.text) // want to create new through direct url
+
     if (this.state.modal === 'transaction-sent') {
       return (
         <div className="modal">
@@ -102,7 +105,7 @@ export class AppComponent extends React.Component {
               Transaction was successfully sent. Wait few minutes, reload, and
               you should see the page updated.
               {
-                this.state.new && <><br />The address of the new page will be : <u>page?contract={this.state.createPayload.contractId}&page={this.state.createPayload.purseId || 'index'}</u></>
+                neww && <><br />The address of the new page will be : <u>page?contract={this.state.createPayload.contractId}&page={this.state.createPayload.purseId || 'index'}</u></>
               }
             </section>
             <footer className="modal-card-foot">
@@ -118,87 +121,66 @@ export class AppComponent extends React.Component {
       );
     }
 
+    if (this.props.home === true || this.state.home === true) {
+      return <HomeComponent
+        errorString={this.props.errorString}
+        create={() => {
+          this.setState({
+            update: false,
+            new: true,
+            home: false,
+          });
+        }}
+      ></HomeComponent>
+    }
+  
     if (this.props.text && !this.state.update && !this.state.new) {
       return (
-        <Fragment>
-          <div className="page-text-cont">
-            <u>
-              {dappy.dappyDomain}
-              {dappy.path}
-            </u>
-            <div className="tip">
-              <input
-                className="input"
-                type="number"
-                step="0.01"
-                min="0.01"
-                value={this.state.tip}
-                onChange={(e) => {
-                  if (typeof parseFloat(e.currentTarget.value) === 'number') {
-                    this.setState({ tip: parseFloat(e.currentTarget.value) });
-                  }
-                }}
-              ></input>
-              <b>REV</b>
-              <button
-                disabled={typeof this.state.tip !== 'number'}
-                type="button"
-                className="button tip"
-                onClick={() => {
-                  dappyRChain.requestPayment({
-                    amount: this.state.tip * 100000000,
-                    from: undefined,
-                    to: this.props.boxConfig.publicKey,
-                  });
-                }}
-              >
-                tip page owner
-              </button>
-            </div>
-            <div
-              className="page-text"
-              dangerouslySetInnerHTML={{
-                __html: converter.makeHtml(this.props.text),
-              }}
-            ></div>
-            <div className="bottom-buttons">
-              <a
-                className="button is-light is-medium"
-                onClick={() => {
-                  this.setState({
-                    update: true,
-                    new: false,
-                  });
-                }}
-              >
-                Update page (admin only)
-              </a>
-              <a
-                className="button is-light is-medium"
-                onClick={() => {
-                  this.setState({
-                    update: false,
-                    new: true,
-                  });
-                }}
-              >
-                Create a new page
-              </a>
-            </div>
-          </div>
-        </Fragment>
+        <PageComponent
+          boxConfig={this.props.boxConfig}
+          text={this.props.text}
+          home={() => {
+            this.setState({
+              update: false,
+              new: false,
+              home: true,
+            });
+          }}
+          update={() => {
+            this.setState({
+              update: true,
+              new: false,
+            });
+          }}
+          create={() => {
+            this.setState({
+              update: false,
+              new: true,
+              home: false,
+            });
+          }}
+        />
       );
     }
 
-    if (this.state.new) {
+    if (neww) {
       return (
         <Fragment>
           <GenesisFormComponent
             onCreatePage={this.onCreatePage}
+            contractId={this.state.new ? undefined : this.props.contractId}
             cancel={() => {
               this.setState({
                 update: false,
-                create: false,
+                new: false,
+                home: false,
+              });
+            }}
+            home={() => {
+              this.setState({
+                update: false,
+                new: false,
+                home: true,
               });
             }}
             text={''}
@@ -207,6 +189,7 @@ export class AppComponent extends React.Component {
         </Fragment>
       );
     }
+  
     return (
       <Fragment>
         <GenesisFormComponent
@@ -215,6 +198,14 @@ export class AppComponent extends React.Component {
             this.setState({
               update: false,
               new: false,
+              home: false,
+            });
+          }}
+          home={() => {
+            this.setState({
+              update: false,
+              new: false,
+              home: true,
             });
           }}
           text={this.props.text}

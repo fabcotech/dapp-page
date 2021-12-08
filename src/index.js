@@ -9,31 +9,25 @@ import {
 } from 'rchain-token';
 import { AppComponent } from './App';
 
+const RCHAIN_TOKEN_SUPPORTED_VERSION = '15.0.2';
 const DEFAULT_MASTER_REGISTRY_URI_MAINNET =
-  'egghoagj6jtxxsiifsx9sk35y1yzqjypds6ankji1tkyk6ckbj78pf';
+  '7uwrizef7ewz9izm5bfd8q3p7kbccxmhnqu4sa4qwmdgdysq1p639r';
 
-class BodyError extends React.Component {
-  render() {
-    return (
-      <div className="body-errors">
-        <p className="body-error-1">{this.props.error}</p>
-        <p className="body-error-2">
-          <span>URL should have the following structure : </span>
-          <u>page?contract=mynftcontract&page=page</u>
-          <br />
-          <br />
-          <span>
-            If you are using an alternative/private network, also reference the
-            master registry uri &master=aaabbb
-          </span>
-        </p>
-      </div>
-    );
-  }
-}
-const bodyError = (err) => {
+const bodyError = (err, masterRegistryUri) => {
   ReactDOM.render(
-    <BodyError error={err}></BodyError>,
+    ReactDOM.render(
+      <AppComponent
+        home={true}
+        errorString={err}
+        masterRegistryUri={masterRegistryUri}
+        contractId={undefined}
+        purseId={undefined}
+        title={undefined}
+        text={undefined}
+        boxConfig={undefined}
+      ></AppComponent>,
+      document.getElementById('root')
+    ),
     document.getElementById('root')
   );
   return;
@@ -69,16 +63,20 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   let contractId = urlParams.get('contract');
   let purseId = urlParams.get('page') || 'index';
-  if (!contractId || contractId.length === 0) {
-    bodyError('did not find contract id in parameters ?contract=x');
-    throw new Error('');
-  }
-
-  if (!masterRegistryUri || masterRegistryUri.length !== 54) {
-    bodyError(
-      'master registry URI is incorrect ?master=x, length must be 54'
+  if (!contractId || contractId.length === 0 || !masterRegistryUri || masterRegistryUri.length !== 54) {
+    ReactDOM.render(
+      <AppComponent
+        home={true}
+        masterRegistryUri={masterRegistryUri}
+        contractId={undefined}
+        purseId={undefined}
+        title={undefined}
+        text={undefined}
+        boxConfig={undefined}
+      ></AppComponent>,
+      document.getElementById('root')
     );
-    throw new Error('');
+    return;
   }
 
   rchainWeb
@@ -97,41 +95,60 @@ document.addEventListener('DOMContentLoaded', function () {
     ], false)
     .then((a) => {
       const results = a.results;
+      console.log('results');
+      console.log(results);
+
       const configNotParsed = JSON.parse(results[0].data).expr[0];
       if (!configNotParsed) {
         bodyError(
-          'Did not find contract config, make sure the contract and master exist'
+          'Did not find contract config, make sure the contract and master exist',
+          masterRegistryUri
         );
         return;
       }
       const config = RChainWeb.utils.rhoValToJs(configNotParsed);
       if (config.fungible !== false) {
         bodyError(
-          'This contract is fungible=true (FT), you need a fungible=false (NFT) contract to use tipboard'
+          'This contract is fungible=true (FT), you need a fungible=false (NFT) contract to use tipboard',
+          masterRegistryUri
         );
         return;
       }
 
-      if (config.version !== '14.0.0') {
-        bodyError('Version should be 14.0.0');
+      if (config.version !== RCHAIN_TOKEN_SUPPORTED_VERSION) {
+        bodyError('Version should be ', RCHAIN_TOKEN_SUPPORTED_VERSION, masterRegistryUri);
         return;
       }
 
       let data;
-      if (JSON.parse(results[1].data).expr[0]) {
-        data = RChainWeb.utils.rhoValToJs(
-          JSON.parse(results[1].data).expr[0]
-        );
-      }
+      try {
+        if (JSON.parse(results[1].data).expr[0]) {
+          data = RChainWeb.utils.rhoValToJs(
+            JSON.parse(results[1].data).expr[0]
+          );
+        }
+      } catch (err) {}
 
       let purses;
-      const d = JSON.parse(results[2].data).expr[0];
-      if (d) {
-        purses = RChainWeb.utils.rhoValToJs(d);
-      }
+      try {
+        const d = JSON.parse(results[2].data).expr[0];
+        if (d) {
+          purses = RChainWeb.utils.rhoValToJs(d);
+        }
+      } catch (err) { }
 
+      console.log('----------')
+      console.log(data)
+      console.log(data[purseId])
       if (data && data[purseId]) {
-        const purseData = JSON.parse(decodeURI(data[purseId]));
+        let purseData;
+
+        try {
+          purseData = JSON.parse(decodeURI(data[purseId]));
+        } catch (err) {
+          bodyError(`Unable to parse page, make sure that ${contractId}.${purseId} exists`);
+          return;
+        }
         if (purseData.title) {
           document.title = purseData.title;
         }
@@ -151,7 +168,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (!boxConfig) {
               bodyError(
-                'critical: did not find box associated with purse ' + purseId
+                'critical: did not find box associated with purse ' + purseId,
+                masterRegistryUri
               );
               return;
             }
@@ -169,28 +187,16 @@ document.addEventListener('DOMContentLoaded', function () {
             );
           });
       } else {
-        dappyRChain
-          .identify({ publicKey: undefined })
-          .then((b) => {
-            if (b.identified) {
-              ReactDOM.render(
-                <AppComponent
-                  masterRegistryUri={masterRegistryUri}
-                  contractId={contractId}
-                  purseId={purseId}
-                  title={undefined}
-                  text={undefined}
-                ></AppComponent>,
-                document.getElementById('root')
-              );
-            } else {
-              console.error('This dapp needs identification');
-            }
-          })
-          .catch((err) => {
-            console.error('This dapp needs identification');
-            console.log(err);
-          });
+        ReactDOM.render(
+          <AppComponent
+            masterRegistryUri={masterRegistryUri}
+            contractId={contractId}
+            purseId={purseId}
+            title={undefined}
+            text={undefined}
+          ></AppComponent>,
+          document.getElementById('root')
+        );
       }
     });
 });
