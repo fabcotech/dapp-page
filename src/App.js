@@ -9,9 +9,7 @@ export class AppComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      home: false,
       modal: undefined,
-      update: false,
       createPayload: undefined,
     };
   }
@@ -85,8 +83,12 @@ export class AppComponent extends React.Component {
 
   render() {
 
-    let neww = this.state.new || // has clicked on "create new"
+    console.log(this.props);
+    console.log(this.state);
+
+    let neww = this.state.page === "create" || // has clicked on "create new"
       (this.props.contractId && !this.props.text) // want to create new through direct url
+    console.log('neww', neww);
 
     if (this.state.modal === 'transaction-sent') {
       return (
@@ -120,47 +122,40 @@ export class AppComponent extends React.Component {
         </div>
       );
     }
-
-    if (this.props.home === true || this.state.home === true) {
-      return <HomeComponent
-        errorString={this.props.errorString}
-        create={() => {
-          this.setState({
-            update: false,
-            new: true,
-            home: false,
-          });
-        }}
-      ></HomeComponent>
-    }
   
-    if (this.props.text && !this.state.update && !this.state.new) {
+    if (this.props.text && !["create", "update", "home"].includes(this.state.page)) {
       return (
         <PageComponent
           boxConfig={this.props.boxConfig}
           text={this.props.text}
           home={() => {
             this.setState({
-              update: false,
-              new: false,
-              home: true,
+              page: "home",
             });
           }}
           update={() => {
             this.setState({
-              update: true,
-              new: false,
+              page: "update",
             });
           }}
           create={() => {
             this.setState({
-              update: false,
-              new: true,
-              home: false,
+              page: "create",
             });
           }}
         />
       );
+    }
+
+    if (this.props.home === true || this.state.page === "home") {
+      return <HomeComponent
+        errorString={this.props.errorString}
+        create={() => {
+          this.setState({
+            page: "create",
+          });
+        }}
+      ></HomeComponent>
     }
 
     if (neww) {
@@ -168,19 +163,15 @@ export class AppComponent extends React.Component {
         <Fragment>
           <GenesisFormComponent
             onCreatePage={this.onCreatePage}
-            contractId={this.state.new ? undefined : this.props.contractId}
+            contractId={this.state.page === "create" ? undefined : this.props.contractId}
             cancel={() => {
               this.setState({
-                update: false,
-                new: false,
-                home: false,
+                page: undefined,
               });
             }}
             home={() => {
               this.setState({
-                update: false,
-                new: false,
-                home: true,
+                page: "home",
               });
             }}
             text={''}
@@ -189,23 +180,19 @@ export class AppComponent extends React.Component {
         </Fragment>
       );
     }
-  
+
     return (
       <Fragment>
         <GenesisFormComponent
           onUpdatePage={this.onUpdatePage}
           cancel={() => {
             this.setState({
-              update: false,
-              new: false,
-              home: false,
+              page: undefined,
             });
           }}
           home={() => {
             this.setState({
-              update: false,
-              new: false,
-              home: true,
+              page: "home",
             });
           }}
           text={this.props.text}

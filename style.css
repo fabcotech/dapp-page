@@ -1,10 +1,9 @@
-
 /* Genesis form and page text */
 
 .body-error-1 {
   color: #b22;
   font-weight: 400;
-  font-size: 1.8rem;
+  font-size: 1.2rem;
 }
 
 .page-text-cont {
@@ -54,9 +53,9 @@
 }
 
 .bottom-buttons {
-    position: fixed;
-    bottom: 2rem;
-    left: 2rem;
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
 }
 
 /* GLOBAL */
@@ -79,7 +78,6 @@ body {
   justify-content: center;
   align-items: center;
 }
-
 
 h1,
 h2,
@@ -108,10 +106,10 @@ p {
   border: 1px solid #245840;
 }
 
-input, textarea {
+input,
+textarea {
   padding: 1.4rem 1.2rem !important;
 }
-
 
 /* HOME */
 .home {

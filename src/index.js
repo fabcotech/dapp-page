@@ -9,7 +9,7 @@ import {
 } from 'rchain-token';
 import { AppComponent } from './App';
 
-const RCHAIN_TOKEN_SUPPORTED_VERSION = '15.0.2';
+const RCHAIN_TOKEN_SUPPORTED_VERSION = '16.0.0';
 const DEFAULT_MASTER_REGISTRY_URI_MAINNET =
   '7uwrizef7ewz9izm5bfd8q3p7kbccxmhnqu4sa4qwmdgdysq1p639r';
 
@@ -45,15 +45,14 @@ document.addEventListener('DOMContentLoaded', function () {
   })
 
   let masterRegistryUri;
+  console.log("urlParams.get('master')", urlParams.get('master'));
+  console.log("urlParams.get('contract')", urlParams.get('contract'));
   if (urlParams.get('master')) {
     console.log(
       'found master registry URI in parameters',
       urlParams.get('master')
     );
     masterRegistryUri = urlParams.get('master');
-  } else if (dappy.dappyDomain.startsWith('gammanetwork/')) {
-    masterRegistryUri =
-      'mpddrwyph33qikosct81pbgkb11td4qrzub4najkfs63skn3fr1di8';
   } else {
     console.log(
       'picking default mainnet / d network master registry URI',
