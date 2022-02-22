@@ -147,7 +147,7 @@ export class AppComponent extends React.Component {
       );
     }
 
-    if (this.props.home === true || this.state.page === "home") {
+    if (!["create", "update"].includes(this.state.page) && (this.props.home === true || this.state.page === "home")) {
       return <HomeComponent
         errorString={this.props.errorString}
         create={() => {

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack --mode development --watch",
     "build": "webpack --mode production",
-    "dappy:push": "node ./node_modules/dappy-cli/lib/ push"
+    "dappy:push": "dappy-cli push"
   },
   "author": "FABCO",
   "license": "MIT",
@@ -20,7 +20,7 @@
     "webpack-cli": "^4.8.0"
   },
   "dependencies": {
-    "dappy-cli": "16.0.0",
+    "dappy-cli": "16.1.0",
     "rchain-token": "fabcotech/rchain-token#16.0.0",
     "react": "16.8.5",
     "react-dom": "16.8.5",
